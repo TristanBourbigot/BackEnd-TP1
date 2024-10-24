@@ -1,4 +1,4 @@
-import {User} from "../models/user.js";
+import {User} from "../models/index.js";
 import bcrypt from "bcrypt";
 import {Error} from "../error/error.js";
 import jwt from "jsonwebtoken";
@@ -68,7 +68,40 @@ export async function getInfo(id) {
                 id: id
             }
         });
+        return user;
     }catch(err){
+        throw new Error(err.status ?? 500, err.message ?? "Internal error");
+    }
+}
+
+
+export async function createFollow(followingId, followedId) {
+    
+    try{
+        const userFollowing = await getInfo(followingId);
+        const userFollowed = await getInfo(followedId)
+        await userFollowed.addFollowing(userFollowing);
+    }catch(err){
+        throw new Error(err.status ?? 500, err.message ?? "Internal error");
+    }
+}
+
+
+export async function getFollowers(id){
+    try {
+        const followers = await User.findAll({
+            where: {id : id},
+            attributes: [],
+            include: [
+                {
+                    model: User,
+                    as: 'Followers',
+                    attributes: ['username', 'profileImage', 'firstName', 'lastName', 'email' ],
+                }
+            ]
+        });
+        return followers
+    } catch (err) {
         throw new Error(err.status ?? 500, err.message ?? "Internal error");
     }
 }

@@ -1,5 +1,5 @@
 import express from "express";
-import {login, createUser, getInfo } from "../controller/user.js";
+import {login, createUser, getInfo, createFollow, getFollowers } from "../controller/user.js";
 import {Error} from '../error/error.js';
 import {asyncHandler} from "../utils/asyncHandler.js"
 import {validateEmail} from "../utils/email.js"
@@ -38,6 +38,29 @@ userRoute.get('/user/getInfo', asyncHandler( async (req,res) =>{
         throw new Error(400, "id is not INTEGER");
     }else{
         const data = await getInfo(req.body.id);
+        res.status(200).json(data);
+    }
+}));
+
+
+userRoute.post('/user/CreateFollow', asyncHandler( async (req,res) =>{
+    if(req.body.followingId && req.body.followedId){
+        await createFollow(req.body.followingId, req.body.followedId);
+        res.status(204).json({})
+    }
+    else {
+        throw new Error(400, "id or password is empty");
+    }
+}));
+
+
+userRoute.get('/user/getFollowers', asyncHandler( async (req,res) =>{
+    if(req.body.id){
+        const followers = await getFollowers(req.body.id);
+        res.status(200).json(followers);
+    }
+    else {
+        throw new Error(400, "id or password is empty");
     }
 }));
 

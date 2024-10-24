@@ -10,10 +10,6 @@ Posts.init(
             type: DataTypes.STRING,
             allowNull: false
         },
-        // userId: {
-        //     type: DataTypes.INTEGER,
-        //     allowNull: false
-        // },
         latitude: {
             type: DataTypes.DOUBLE,
             allowNull: false
@@ -25,6 +21,7 @@ Posts.init(
     },
         {
         sequelize,
+        include: ['user'],
         modelName: 'Posts',
         timestamps: true
     },

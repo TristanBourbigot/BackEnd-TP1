@@ -24,15 +24,16 @@ User.belongsToMany(User, {
 Posts.hasMany(Images);
 Images.belongsTo(Posts);
 
-Posts.belongsToMany(Posts,{
+Posts.belongsToMany(Posts, {
     through: 'Comments',
-    as: 'commentingPostId',
+    as: 'commentingPosts', // Les posts qui commentent
     foreignKey: 'commentingPostId',
     otherKey: 'commentedPostId',
 });
-Posts.belongsToMany(Posts,{
+
+Posts.belongsToMany(Posts, {
     through: 'Comments',
-    as: 'commentedPostId',
+    as: 'commentedPosts', // Les posts qui sont commentés
     foreignKey: 'commentedPostId',
     otherKey: 'commentingPostId',
 });
