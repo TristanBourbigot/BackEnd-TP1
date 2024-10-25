@@ -11,10 +11,11 @@ Channels.init(
             allowNull: false
         },
     },
-        {
+    {
         sequelize,
         modelName: 'Channels',
         timestamps: true
+        
     },
 );
 
