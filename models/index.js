@@ -1,6 +1,8 @@
 import {User} from "./user.js";
 import {Posts} from "./posts.js";
 import {Images} from "./images.js";
+import { Messages } from "./message.js";
+import {Channels} from "./channels.js";
 
 User.hasMany(Posts);
 Posts.belongsTo(User);
@@ -19,7 +21,23 @@ User.belongsToMany(User, {
     otherKey: 'followedUserId',
 });
 
+User.hasMany(Messages);
+Messages.belongsTo(User);
 
+Channels.hasMany(Messages);
+Messages.belongsTo(Channels);
+
+User.belongsToMany(Channels, {
+    through: 'ChannelUsers'
+});
+
+Channels.belongsToMany(User, {
+    through: 'ChannelUsers'
+});
+
+User.belongsToMany(Channels, {
+    through: 'ChannelUsers'
+});
 
 Posts.hasMany(Images);
 Images.belongsTo(Posts);

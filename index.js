@@ -7,7 +7,7 @@ import postRouter from './routes/post.js';
 const app = express();
 const port = 3000;
 
-// await sequelize.sync({ force: true });
+await sequelize.sync({ force: true });
 app.use(express.json());
 app.use('/api',userRoute);
 app.use('/api',postRouter);
