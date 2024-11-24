@@ -25,8 +25,8 @@ postRouter.post('/post/CreateComment', asyncHandler( async (req,res) =>{
 }));
 
 postRouter.get('/post/getComment', asyncHandler( async (req,res) =>{
-    if(req.body.id){
-        const comment = await getComment(req.body.id);
+    if(req.query.id){
+        const comment = await getComment(req.query.id);
         res.status(200).json(comment);
     }else{
         throw new Error(400, "Invalid CreatePost");
@@ -35,8 +35,8 @@ postRouter.get('/post/getComment', asyncHandler( async (req,res) =>{
 
 
 postRouter.get('/post/getPostsOfUser', asyncHandler( async (req,res) =>{
-    if(req.body.id){
-        const comment = await getPostsOfUser(req.body.id);
+    if(req.query.id){
+        const comment = await getPostsOfUser(req.query.id);
         res.status(200).json(comment);
     }else{
         throw new Error(400, "Invalid CreatePost");
@@ -45,8 +45,8 @@ postRouter.get('/post/getPostsOfUser', asyncHandler( async (req,res) =>{
 
 
 postRouter.get('/post/getFeed', asyncHandler( async (req,res) =>{
-    if(req.body.id){
-        const comment = await getFeed(req.body.id);
+    if(req.query.id){
+        const comment = await getFeed(req.query.id);
         res.status(200).json(comment);
     }else{
         throw new Error(400, "Invalid CreatePost");

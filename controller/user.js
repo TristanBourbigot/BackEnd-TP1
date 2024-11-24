@@ -55,12 +55,11 @@ export async function login(id, password){
                 [Op.or]: [
                     { username: id },
                     { email: id }
-                ]
+                ],
             } 
         });
 
-        if(user){
-            const data = await asyncCompare(password, user.password ?? "");
+        if(user && await asyncCompare(password, user.password ?? "")){
             const token = jwt.sign({ ...user }, SECRET);
             return token;
         }else{

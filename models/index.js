@@ -35,10 +35,6 @@ Channels.belongsToMany(User, {
     through: 'ChannelUsers'
 });
 
-User.belongsToMany(Channels, {
-    through: 'ChannelUsers'
-});
-
 Posts.hasMany(Images);
 Images.belongsTo(Posts);
 
@@ -59,4 +55,4 @@ Posts.belongsToMany(Posts, {
 
 
 
-export {User, Posts,  Images};
+export {User, Posts, Images, Channels, Messages};

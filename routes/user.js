@@ -32,9 +32,8 @@ userRoute.post('/user/register', asyncHandler (async (req, res) => {
     }
 }));
 
-userRoute.get('/user/auth', asyncHandler( async (req,res) =>{
-    const { id, password } = req.query;
-    
+userRoute.post('/user/auth', asyncHandler( async (req,res) =>{
+    const { id, password } = req.body;
     
     if (id && password) {
         const token = await login(id, password);
@@ -48,12 +47,12 @@ userRoute.get('/user/auth', asyncHandler( async (req,res) =>{
 userRoute.use(authExpress);
 
 userRoute.get('/user/getInfo', asyncHandler( async (req,res) =>{
-    if(!req.body.id){
+    if(!req.query.id){
         throw new Error(400, "id is empty");
-    }else if(req.body.id !== parseInt(req.body.id, 10)){
+    }else if(req.query.id !== parseInt(req.query.id, 10)){
         throw new Error(400, "id is not INTEGER");
     }else{
-        const data = await getInfo(req.body.id);
+        const data = await getInfo(req.query.id);
         res.status(200).json(data);
     }
 }));
@@ -71,8 +70,8 @@ userRoute.post('/user/CreateFollow', asyncHandler( async (req,res) =>{
 
 
 userRoute.get('/user/getFollowers', asyncHandler( async (req,res) =>{
-    if(req.body.id){
-        const followers = await getFollowers(req.body.id);
+    if(req.query.id){
+        const followers = await getFollowers(req.query.id);
         res.status(200).json(followers);
     }
     else {
