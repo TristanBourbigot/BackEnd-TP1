@@ -10,6 +10,9 @@
     <div id="page">
         <h2>Login to Connect to WebSocket</h2>
         <form id="loginForm">
+            <label for="room">Room:</label>
+            <input type="text" id="channel" name="channel" required>
+            <br>
             <label for="id">User ID:</label>
             <input type="text" id="id" name="id" required>
             <br>
@@ -55,8 +58,8 @@ function setCookie(name, value, days) {
     }
 
     // Fonction pour se connecter au WebSocket
-    function connectToWebSocket(token) {
-      const socket = io('http://localhost:3001', {
+    function connectToWebSocket(token, channel) {
+      const socket = new io('ws://127.0.0.1:3001/'+channel, {
         auth: {
           token: token // Passer le token au WebSocket
         }
@@ -95,14 +98,16 @@ function setCookie(name, value, days) {
       // Récupérer les identifiants de l'utilisateur depuis le formulaire
       const userId = document.getElementById('id').value;
       const password = document.getElementById('password').value;
+      const channel = document.getElementById('channel').value;
 
       try {
-        // Requête POST vers l'API d'authentification pour récupérer le token
-        const response = await fetch(`http://localhost:3000/api/user/auth?id=${userId}&password=${password}`, {
-          method: 'GET',
+        // Requête GET vers l'API d'authentification pour récupérer le token
+        const response = await fetch('http://localhost:3000/api/user/auth', {
+          method: 'POST',
           headers: {
             'Content-Type': 'application/json'
-          }
+          },
+          body: JSON.stringify({ id: userId, password: password }) // Envoyer les identifiants dans le corps de la requête
         });
 
         if (!response.ok) {
@@ -119,7 +124,7 @@ function setCookie(name, value, days) {
         document.getElementById('message').innerText = 'Authenticated successfully! Connecting to WebSocket...';
 
         // Connexion au WebSocket avec le token
-        connectToWebSocket(token);
+        connectToWebSocket(token, channel);
 
       } catch (error) {
         document.getElementById('message').innerText = 'Error: ' + error.message;
