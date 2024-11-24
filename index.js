@@ -4,7 +4,7 @@ import { errorHandler } from './error/index.js';
 import userRoute from './routes/user.js';
 import postRouter from './routes/post.js';
 import {authExpress} from "./auth/index.js";
-import { initSocket } from './utils/websocket.js';
+import {websocket} from './utils/websocket.js';
 import http from 'http';
 import cors from 'cors';
 
@@ -13,21 +13,15 @@ app.use(cors());
 const portApi = 3000;
 const portSocket = 3001;
 
-// await sequelize.sync({ force: true });
 
+// await sequelize.sync({ force: true });
 app.use(express.json());
 app.use('/api', userRoute);
 app.use('/api', authExpress, postRouter);
 
 app.use(errorHandler);
 
-const server = http.createServer(app);
-initSocket(server);
 
 app.listen(portApi, () => {
   console.log(`API app listening on port ${portApi}`);
-});
-
-server.listen(portSocket, () => {
-  console.log(`WebSocket app listening on port ${portSocket}`);
 });
