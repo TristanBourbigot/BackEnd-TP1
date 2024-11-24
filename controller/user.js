@@ -25,6 +25,29 @@ function asyncCrypt(password){
     });
 }
 
+export async function validateEmail(email){
+    const user = await User.findOne({
+        where:{
+            email: email.replace(/\s/g, '')
+        }
+    });
+    return String(email)
+      .toLowerCase()
+      .match(
+        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+      ) &&  !user;
+  }
+
+
+export async function validateUsername(username){
+    const user = await User.findOne({
+        where:{
+            username: username
+        }
+    });
+    return Boolean(user);
+}
+
 export async function login(id, password){
     try{             
         const user = await User.findOne({
@@ -48,14 +71,17 @@ export async function login(id, password){
     }
 }
 
-export async function createUser(username, email, password){
+export async function createUser(username, email, password, lastname, firstname){
     try{
         const user = await User.create({
             username: username,
             email: email,
+            lastName: lastname,
+            firstName: firstname,
             password: await asyncCrypt(password)
         });
     }catch(err){
+        console.log(err);
         throw new Error(err.status ?? 500, err.message ?? "Internal error");
     }
 }

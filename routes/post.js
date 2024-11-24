@@ -2,12 +2,9 @@ import express from "express";
 import {createPost, createComment, getComment, getPostsOfUser, getFeed} from "../controller/post.js"
 import {Error} from '../error/error.js';
 import {asyncHandler} from "../utils/asyncHandler.js"
-import {auth} from "../auth/index.js";
 
 const postRouter = express();
 
-
-postRouter.use(auth);
 
 postRouter.post('/post/CreatePost', asyncHandler( async (req,res) =>{
     if(req.body.body && req.body.latitude && req.body.longitude && req.body.userId){
