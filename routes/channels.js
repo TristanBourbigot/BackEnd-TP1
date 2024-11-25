@@ -30,7 +30,7 @@ channelRouter.post('/channel/addUserToChannel', asyncHandler( async (req,res) =>
 
 
 channelRouter.delete('/channel/deleteUserFromChannel', asyncHandler( async (req,res) =>{
-    if(req.body.userId && req.body.channelId){
+    if(req.query.userId && req.query.channelId){
         await deleteUserFromChannel(req.body.userId, req.body.channelId);
         res.status(204).json({});
     }else{
