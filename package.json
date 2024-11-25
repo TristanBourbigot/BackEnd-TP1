@@ -17,6 +17,8 @@
     "sequelize": "^6.37.4",
     "socket.io": "^4.8.1",
     "sqlite3": "^5.1.7",
+    "swagger-ui-express": "^5.0.0",
+    "yamljs": "^0.3.0",
     "tp1": "file:"
   }
 }
