@@ -49,8 +49,6 @@ userRoute.use(authExpress);
 userRoute.get('/user/getInfo', asyncHandler( async (req,res) =>{
     if(!req.query.id){
         throw new Error(400, "id is empty");
-    }else if(req.query.id !== parseInt(req.query.id, 10)){
-        throw new Error(400, "id is not INTEGER");
     }else{
         const data = await getInfo(req.query.id);
         res.status(200).json(data);
