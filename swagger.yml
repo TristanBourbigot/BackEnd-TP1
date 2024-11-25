@@ -1,0 +1,511 @@
+openapi: 3.0.0
+info:
+  title: Social Media API
+  version: 1.0.0
+  description: API for a social media application with user, post, message, and channel functionalities
+
+servers:
+  - url: http://localhost:3000/api
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    User:
+      type: object
+      properties:
+        username:
+          type: string
+        email:
+          type: string
+        firstname:
+          type: string
+        lastname:
+          type: string
+        profileImage:
+          type: string
+          default: "./images/no-user-profil-image.jpg"
+
+    Post:
+      type: object
+      properties:
+        body:
+          type: string
+        latitude:
+          type: number
+          format: double
+        longitude:
+          type: number
+          format: double
+        userId:
+          type: integer
+
+    Message:
+      type: object
+      properties:
+        userId:
+          type: integer
+        channelId:
+          type: integer
+        message:
+          type: string
+
+    Channel:
+      type: object
+      properties:
+        name:
+          type: string
+        userId:
+          type: integer
+
+tags:
+  - name: User
+    description: User management and authentication
+  - name: Post
+    description: Post-related operations
+  - name: Message
+    description: Messaging operations
+  - name: Channel
+    description: Channel management
+
+paths:
+  /user/register:
+    post:
+      tags:
+        - User
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+                - email
+                - password
+                - firstname
+                - lastname
+              properties:
+                username:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+                firstname:
+                  type: string
+                lastname:
+                  type: string
+      responses:
+        204:
+          description: User successfully registered
+        400:
+          description: Invalid registration details
+
+  /user/auth:
+    post:
+      tags:
+        - User
+      summary: User login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - id
+                - password
+              properties:
+                id:
+                  type: string
+                password:
+                  type: string
+      responses:
+        200:
+          description: Successfully authenticated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+        400:
+          description: Invalid credentials
+
+  /user/getInfo:
+    get:
+      tags:
+        - User
+      summary: Get user information
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: query
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: User information retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        400:
+          description: Invalid user ID
+
+  /user/CreateFollow:
+    post:
+      tags:
+        - User
+      summary: Create a follow relationship
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - followingId
+                - followedId
+              properties:
+                followingId:
+                  type: integer
+                followedId:
+                  type: integer
+      responses:
+        204:
+          description: Follow relationship created
+        400:
+          description: Invalid follow request
+
+  /user/getFollowers:
+    get:
+      tags:
+        - User
+      summary: Get followers of a user
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: query
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Followers retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        400:
+          description: Invalid user ID
+
+  /post/CreatePost:
+    post:
+      tags:
+        - Post
+      summary: Create a new post
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Post'
+      responses:
+        204:
+          description: Post successfully created
+        400:
+          description: Invalid post details
+
+  /post/CreateComment:
+    post:
+      tags:
+        - Post
+      summary: Create a comment on a post
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - body
+                - latitude
+                - longitude
+                - userId
+                - postId
+              properties:
+                body:
+                  type: string
+                latitude:
+                  type: number
+                  format: double
+                longitude:
+                  type: number
+                  format: double
+                userId:
+                  type: integer
+                postId:
+                  type: integer
+      responses:
+        204:
+          description: Comment successfully created
+        400:
+          description: Invalid comment details
+
+  /post/getComment:
+    get:
+      tags:
+        - Post
+      summary: Get comments for a post
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: query
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Comments retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+
+  /post/getPostsOfUser:
+    get:
+      tags:
+        - Post
+      summary: Get posts of a specific user
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: query
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: User's posts retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Post'
+        400:
+          description: Invalid user ID
+
+  /post/getFeed:
+    get:
+      tags:
+        - Post
+      summary: Get user's feed
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: query
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: User feed retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Post'
+        400:
+          description: Invalid user ID
+
+  /message/createMessage:
+    post:
+      tags:
+        - Message
+      summary: Create a new message
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Message'
+      responses:
+        204:
+          description: Message successfully created
+        400:
+          description: Invalid message details
+
+  /message/getMessagesOfChannel:
+    get:
+      tags:
+        - Message
+      summary: Get messages of a channel
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: query
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Channel messages retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Message'
+        400:
+          description: Invalid channel ID
+
+  /channel/createChannel:
+    post:
+      tags:
+        - Channel
+      summary: Create a new channel
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Channel'
+      responses:
+        200:
+          description: Channel successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Channel'
+        400:
+          description: Invalid channel details
+
+  /channel/addUserToChannel:
+    post:
+      tags:
+        - Channel
+      summary: Add a user to a channel
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - userId
+                - channelId
+              properties:
+                userId:
+                  type: integer
+                channelId:
+                  type: integer
+      responses:
+        204:
+          description: User added to channel
+        400:
+          description: Invalid user or channel ID
+
+  /channel/deleteUserFromChannel:
+    delete:
+      tags:
+        - Channel
+      summary: Remove a user from a channel
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: query
+          name: userId
+          required: true
+          schema:
+            type: integer
+        - in: query
+          name: channelId
+          required: true
+          schema:
+            type: integer
+      responses:
+        204:
+          description: User removed from channel
+        400:
+          description: Invalid user or channel ID
+
+  /channel/getChannelsOfUser:
+    get:
+      tags:
+        - Channel
+      summary: Get channels of a user
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: query
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: User's channels retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Channel'
+        400:
+          description: Invalid user ID
+
+  /channel/Open:
+    get:
+      tags:
+        - Channel
+      summary: Open a channel
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: query
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Channel opened successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Channel'
+        400:
+          description: Invalid channel ID
